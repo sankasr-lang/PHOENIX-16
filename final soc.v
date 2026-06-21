@@ -51,8 +51,8 @@
 `define PERI_TIMER    4'd5
 `define PERI_PWM      4'd6
 `define PERI_SPI      4'd7
-`define PERI_SPI_SLAVE_TX 4'd8   // load the byte to send back when polled
-`define PERI_SPI_SLAVE_RX 4'd9   // non-blocking: take received byte if ready
+`define PERI_SPI_SLAVE_TX 4'd8   
+`define PERI_SPI_SLAVE_RX 4'd9   
 `define PERI_SEG7         4'd10
 
 module top(
@@ -118,45 +118,32 @@ wire [7:0] spi_rx_data;
 wire       spi_busy;
 wire       spi_done;
 reg  [7:0] spi_slave_tx_data;
-wire [7:0] spi_slave_rx_data;   // raw output straight from spi_slave module
-wire       spi_slave_done;      // raw 1-cycle pulse straight from spi_slave module
-reg  [7:0] spi_slave_rx_byte;   // latched copy - survives until consumed
-reg        spi_slave_rx_valid;  // sticky "a byte is waiting" flag
+wire [7:0] spi_slave_rx_data;   
+wire       spi_slave_done;      
+reg  [7:0] spi_slave_rx_byte;   
+reg        spi_slave_rx_valid;  
 reg [15:0] seg7_value;
 
 
-wire mosi_m, sclk_m, cs_m;   // master's driven outputs (internal)
-wire miso_s;                  // slave's driven output   (internal)
-// slave keep listening in the background while your code does other work.
+wire mosi_m, sclk_m, cs_m;   
+wire miso_s;                  
 wire spi_mode_is_slave;
 assign spi_mode_is_slave =
        (CTRL_REG[3:0] == `PERI_SPI_SLAVE_TX) ||
        (CTRL_REG[3:0] == `PERI_SPI_SLAVE_RX);
 
-wire mosi_m, sclk_m, cs_m;   // master's driven outputs (internal)
-wire miso_s;                  // slave's driven output   (internal)
+wire mosi_m, sclk_m, cs_m;   
+wire miso_s;                 
 
 assign MOSI = spi_mode_is_slave ? 1'bz : mosi_m;
 assign SCLK = spi_mode_is_slave ? 1'bz : sclk_m;
 assign CS   = spi_mode_is_slave ? 1'bz : cs_m;
 assign MISO = spi_mode_is_slave ? miso_s : 1'bz;
 
-wire miso_in_m = MISO;   // master reads external slave device on MISO
-wire mosi_in_s = MOSI;   // our slave reads external master's MOSI
-wire sclk_in_s = SCLK;   // our slave reads external master's SCLK
-wire cs_in_s   = CS;     // our slave reads external master's CS
-
-assign MOSI = spi_mode_is_slave ? 1'bz : mosi_m;
-assign SCLK = spi_mode_is_slave ? 1'bz : sclk_m;
-assign CS   = spi_mode_is_slave ? 1'bz : cs_m;
-assign MISO = spi_mode_is_slave ? miso_s : 1'bz;
-
-wire miso_in_m = MISO;   // master reads external slave device on MISO
-wire mosi_in_s = MOSI;   // our slave reads external master's MOSI
-wire sclk_in_s = SCLK;   // our slave reads external master's SCLK
-wire cs_in_s   = CS;     // our slave reads external master's 
-
-
+wire miso_in_m = MISO;   
+wire mosi_in_s = MOSI;  
+wire sclk_in_s = SCLK;   
+wire cs_in_s   = CS;     
 
 always @(*) begin
     if (oper_type==`mul) begin
@@ -941,15 +928,15 @@ end
 endmodule
 
 module spi_slave(
-    input            clk,      // system clock (NOT the SPI clock)
+    input            clk,      
     input            rst,
-    input            SCLK,     // from external master
-    input            CS,       // from external master, active low
-    input            MOSI,     // from external master
-    output reg       MISO,     // to external master
-    input  [7:0]     tx_data,  // byte to send back, loaded continuously by CPU
-    output reg [7:0] rx_data,  // last byte received
-    output reg       done      // 1-cycle pulse when a full byte has been received
+    input            SCLK,    
+    input            CS,       
+    input            MOSI,     
+    output reg       MISO,     
+    input  [7:0]     tx_data,  
+    output reg [7:0] rx_data,  
+    output reg       done      
 );
 
     reg [2:0] sclk_sync, cs_sync, mosi_sync;
@@ -967,7 +954,7 @@ module spi_slave(
 
     wire sclk_rise  =  sclk_sync[1] & ~sclk_sync[2];
     wire sclk_fall  = ~sclk_sync[1] &  sclk_sync[2];
-    wire cs_active  = ~cs_sync[1];      // active low
+    wire cs_active  = ~cs_sync[1];     
     wire mosi_bit   =  mosi_sync[1];
 
     reg [2:0] bit_cnt;
@@ -986,8 +973,7 @@ module spi_slave(
             done <= 1'b0;
 
             if (!cs_active) begin
-                // Deselected: reload the byte we'll send next time we're selected,
-                // and reset bit count so we start cleanly on the next CS assert.
+               
                 bit_cnt   <= 3'd0;
                 shift_out <= tx_data;
                 MISO      <= tx_data[7];
@@ -1013,8 +999,8 @@ endmodule
 module seg7_driver(
     input             clk, rst,
     input      [15:0] value,
-    output reg [6:0]  seg,   // {g,f,e,d,c,b,a} active-low
-    output reg [3:0]  an     // active-low digit enable
+    output reg [6:0]  seg,  
+    output reg [3:0]  an     
 );
 
     reg [17:0] refresh_cnt;
@@ -1022,7 +1008,7 @@ module seg7_driver(
         if (rst) refresh_cnt <= 18'd0;
         else     refresh_cnt <= refresh_cnt + 1'b1;
 
-    wire [1:0] digit_sel = refresh_cnt[17:16]; // ~750 Hz refresh @100MHz clk
+    wire [1:0] digit_sel = refresh_cnt[17:16]; 
 
     reg [3:0] nibble;
     always @(*) begin
