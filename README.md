@@ -240,7 +240,6 @@ Busy-waits until `timerdone`; re-arming is blocked while `timerenable` is alread
 ## 7. Future Work
 
 - Pipeline hazard handling for back-to-back data-dependent instructions.
-- Interrupt-driven peripheral access as an alternative to `BUSY_WAIT` polling.
 - Expanded assembler features (labels, macros, pseudo-instructions).
 
 ---
