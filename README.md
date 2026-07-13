@@ -220,7 +220,7 @@ Busy-waits until `timerdone`; re-arming is blocked while `timerenable` is alread
 
 ### 6.1 ALU Testing and Simulation Waveforms
 ![alt text](<WhatsApp Image 2026-06-21 at 5.00.05 PM-1.jpeg>)
-![alt text](image-4.png)
+![V](image-4.png)
 
 ### 6.2 Instruction Timing Verification (9T → 5T → 1T/2T)
 ![alt text](image.png)
@@ -240,6 +240,7 @@ Busy-waits until `timerdone`; re-arming is blocked while `timerenable` is alread
 ## 7. Future Work
 
 - Pipeline hazard handling for back-to-back data-dependent instructions.
+- Interrupt-driven peripheral access as an alternative to `BUSY_WAIT` polling.
 - Expanded assembler features (labels, macros, pseudo-instructions).
 
 ---
