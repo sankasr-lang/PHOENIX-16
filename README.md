@@ -3,7 +3,7 @@
 ## 1. Overview
 
 PHOENIX-16 is a 16-bit processor core designed and implemented from the ground up in Verilog RTL — a custom instruction set, a custom 32-bit instruction encoding, a custom multi-cycle control unit, and a fully self-contained peripheral ecosystem, with no dependency on an existing ISA template. The core was built, debugged, and optimized across several design iterations, evolving from a slow multi-T-cycle execution model into a fast near-single-cycle datapath.
-
+![alt text](Final_Architecture-1.jpeg)
 **Core specifications**
 
 | Feature                              |                   Detail                                        |
